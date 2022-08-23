@@ -4,7 +4,7 @@ namespace Demo.Service
 {
     public interface IAuth
     {
-        Task<Person> register(AddPerson add);
+        Task<Person> register(Register add);
         Task<string> login(Login add);
 
     }

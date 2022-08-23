@@ -19,13 +19,14 @@ namespace Demo.Controllers
             this.auth = auth;
         }
         [HttpPost("register")]
-        public async Task<Person> register(AddPerson req)
+        public async Task<Person> register(Register req)
         {
             return (await auth.register(req));
         }
         [HttpPost("login")]
         public async Task<String> login(Login req)
         {
+
             return (await auth.login(req));
         }
 

@@ -7,7 +7,8 @@ namespace Demo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   
+    [Authorize(Roles = "Admin")]
+
     public class PController : ControllerBase
     {
         private readonly IPersonData _personData;
@@ -17,21 +18,21 @@ namespace Demo.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> getPersons()
         {
             return Ok(await _personData.getPersons());
         }
 
         [HttpPost]
-        public async Task<IActionResult> addPerson([FromBody] AddPerson add)
+        public async Task<IActionResult> addPerson([FromBody] Person add)
         {
             return Ok(await _personData.addPerson(add));
         }
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> updateperson([FromBody] AddPerson upd, [FromRoute] Guid id)
+        public async Task<IActionResult> updateperson([FromBody] Person upd, [FromRoute] Guid id)
         {
             return Ok(await _personData.updatePerson(upd, id));
         }
@@ -40,6 +41,7 @@ namespace Demo.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> getPerson([FromRoute] Guid id)
         {
+            
             return Ok(await _personData.getPerson(id));
         }
 

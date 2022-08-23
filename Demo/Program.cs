@@ -22,16 +22,30 @@ builder.Services.AddScoped<IAuth, Auth>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Standard Authentication header using bearer scheme (\"bearer {token}\")",
+        Description = "Standard Authentication header using bearer scheme (\"{token}\")",
         In = ParameterLocation.Header,
         Name = "Auth",
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+
     });
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    var reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer"};
+    var openApiScheme = new OpenApiSecurityScheme { Reference = reference };
+
+
+
+    // Adds the auth header globally on all requests
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { openApiScheme, new string[] {} }
+                });
 });
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -40,7 +54,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
             .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
             ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateAudience = false,
+            ValidateLifetime = true
 
         };
     });

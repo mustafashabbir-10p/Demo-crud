@@ -34,7 +34,7 @@ namespace Demo.Service
             return (token);
         }
 
-        public async Task<Person> register(AddPerson req)
+        public async Task<Person> register(Register req)
         {
             var person = new Person();
             

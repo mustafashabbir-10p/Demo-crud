@@ -11,7 +11,7 @@ namespace Demo.Service
         {
             this.dbContext = dbContext;
         }
-        public async Task<Person> addPerson(AddPerson add)
+        public async Task<Person> addPerson(Person add)
         {
             var person = new Person()
             {
@@ -19,6 +19,9 @@ namespace Demo.Service
                 name = add.name,
                 age = add.age,
                 job = add.job,
+                passwordHash = add.passwordHash,
+                passwordSalt = add.passwordSalt,
+                username = add.username,
             };
 
             await dbContext.Persons.AddAsync(person);
@@ -55,14 +58,18 @@ namespace Demo.Service
             return await dbContext.Persons.ToListAsync();
         }
 
-        public async Task<Person> updatePerson(AddPerson upd, Guid id)
+        public async Task<Person> updatePerson(Person req, Guid id)
         {
             var person = await dbContext.Persons.FindAsync(id);
             if (person != null)
             {
-                person.name = upd.name;
-                person.age = upd.age;
-                person.job = upd.job;
+                person.username = req.username;
+                person.passwordSalt = req.passwordSalt;
+                person.passwordHash = req.passwordHash;
+                person.id = Guid.NewGuid();
+                person.name = req.name;
+                person.job = req.job;
+                person.age = req.age;
 
                 await dbContext.SaveChangesAsync();
                 return person;

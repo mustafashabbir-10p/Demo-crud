@@ -8,9 +8,9 @@ namespace Demo.Service
 
         Task<Person> getPerson(Guid id);
 
-        Task<Person> addPerson(AddPerson add);
+        Task<Person> addPerson(Person add);
 
-        Task<Person> updatePerson(AddPerson upt, Guid id);
+        Task<Person> updatePerson(Person upt, Guid id);
         Task<Person> deletePerson(Guid id);
     }
 }
