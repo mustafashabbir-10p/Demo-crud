@@ -1,4 +1,5 @@
 ﻿using Demo.models;
+using Demo.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -12,76 +13,22 @@ namespace Demo.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public static Person person = new Person();
-        private readonly IConfiguration _configuration;
-
-        public AuthController(IConfiguration config)
+        private readonly IAuth auth;
+        public AuthController(IAuth auth)
         {
-            _configuration = config;
+            this.auth = auth;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> register(AddPerson req)
+        public async Task<Person> register(AddPerson req)
         {
-            createPasswordHash(req.password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            person.username = req.username;
-            person.passwordSalt = passwordSalt;
-            person.passwordHash = passwordHash;
-            person.id = Guid.NewGuid();
-            person.name = req.name;
-            person.job = req.job;
-            person.age = req.age;
-
-            return Ok(person);
+            return (await auth.register(req));
         }
         [HttpPost("login")]
-        public async Task<IActionResult> login(Login req)
+        public async Task<String> login(Login req)
         {
-            if(person.username != req.username)
-            {
-                return BadRequest("wrong username");
-            }
-            if (!verifyPassword(req.password, person.passwordHash, person.passwordSalt))
-            {
-                return BadRequest("wrong password");
-            }
-            string token = createToken(person);
-            return Ok(token);
-
+            return (await auth.login(req));
         }
 
-        private string createToken(Person person)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, person.name),
-            };
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
-        }
-        private void createPasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-
-        }
-
-        private bool verifyPassword(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-               var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computeHash.SequenceEqual(passwordHash);
-            }
-        }
+        
     }
 }

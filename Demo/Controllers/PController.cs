@@ -1,20 +1,23 @@
 ﻿using Demo.models;
 using Demo.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class PController : ControllerBase
     {
-        private IPersonData _personData;
+        private readonly IPersonData _personData;
         public PController(IPersonData pdata)
         {
             _personData = pdata;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> getPersons()
         {
             return Ok(await _personData.getPersons());
