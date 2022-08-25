@@ -58,7 +58,8 @@ namespace Demo.Service
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, person.name),
+                new Claim(ClaimTypes.Name, person.username),
+                new Claim(ClaimTypes.NameIdentifier, person.id.ToString()),
                 new Claim(ClaimTypes.Role, "Admin")
 
             };

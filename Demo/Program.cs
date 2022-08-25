@@ -1,11 +1,11 @@
-using Demo.Data;
-using Demo.Service;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
-using System.Text;
+global using Demo.Data;
+global using Demo.Service;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi.Models;
+global using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

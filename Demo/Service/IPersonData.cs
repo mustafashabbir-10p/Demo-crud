@@ -12,5 +12,6 @@ namespace Demo.Service
 
         Task<Person> updatePerson(Person upt, Guid id);
         Task<Person> deletePerson(Guid id);
+        bool verifyUser(string user, Guid id);
     }
 }

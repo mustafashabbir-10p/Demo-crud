@@ -2,6 +2,7 @@
 using Demo.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Demo.Controllers
 {
@@ -41,8 +42,11 @@ namespace Demo.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> getPerson([FromRoute] Guid id)
         {
-            
-            return Ok(await _personData.getPerson(id));
+            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(_personData.verifyUser(user, id)){
+                return Ok(await _personData.getPerson(id));
+            }
+            return BadRequest("Access revoked");
         }
 
         [HttpDelete]

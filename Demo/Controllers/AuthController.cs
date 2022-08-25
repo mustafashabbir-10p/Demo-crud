@@ -26,7 +26,6 @@ namespace Demo.Controllers
         [HttpPost("login")]
         public async Task<String> login(Login req)
         {
-
             return (await auth.login(req));
         }
 

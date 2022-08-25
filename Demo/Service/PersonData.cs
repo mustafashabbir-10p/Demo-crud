@@ -1,12 +1,15 @@
 ﻿using Demo.Data;
 using Demo.models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Web.Providers.Entities;
 
 namespace Demo.Service
 {
     public class PersonData : IPersonData
     {
         private readonly PersonDbContext dbContext;
+        
         public PersonData(PersonDbContext dbContext)
         {
             this.dbContext = dbContext;
@@ -32,7 +35,6 @@ namespace Demo.Service
 
         public async Task<Person> deletePerson(Guid id)
         {
-
             var person = await dbContext.Persons.FindAsync(id);
             if (person != null)
             {
@@ -76,6 +78,12 @@ namespace Demo.Service
             }
             return null;
             
+        }
+         public bool verifyUser(string user, Guid id)
+        {
+            if (user.Equals(id.ToString()))
+                return true;
+            return false;
         }
     }
 }
